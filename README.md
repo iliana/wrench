@@ -2,6 +2,8 @@
 
 wrench is a Nix flake for quickly declaring NixOS configurations with custom packages, and tests to test those configurations.
 
+I haven't written reference documentation yet but you can refer to [iliana/nixos-configs](https://github.com/iliana/nixos-configs) for more in-depth usage.
+
 ## Example
 
 flake.nix:
