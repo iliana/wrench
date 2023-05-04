@@ -7,7 +7,6 @@
   ...
 }: {
   checks ? {},
-  ciPackage ? null,
   eachSystem ? (system: {}),
   nixosConfigurations ? {},
   nixosImports ? [],
@@ -92,36 +91,7 @@ in
   lib.attrsets.recursiveUpdate
   (flake-utils.lib.eachSystem systems eachSystem)
   {
-    packages = genSystems (system:
-      myPkgs.${system}
-      // (
-        if (ciPackage != null)
-        then {
-          ${ciPackage} = pkgs.${system}.linkFarm ciPackage (lib.lists.flatten [
-            (lib.attrsets.mapAttrsToList
-              (name: drv: {
-                name = "packages/${name}";
-                path = drv;
-              })
-              myPkgs.${system})
-            (lib.attrsets.mapAttrsToList
-              (name: drv: {
-                name = "systems/${name}";
-                path = drv.config.system.build.toplevel;
-              })
-              (lib.attrsets.filterAttrs
-                (name: _: mySystems.${name}.system == system)
-                myNixosConfigs))
-            (lib.attrsets.mapAttrsToList
-              (name: drv: {
-                name = "checks/${name}";
-                path = drv;
-              })
-              myChecks.${system})
-          ]);
-        }
-        else {}
-      ));
+    packages = myPkgs;
     nixosConfigurations = myNixosConfigs;
     checks = myChecks;
   }
