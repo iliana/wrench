@@ -11,6 +11,7 @@
   nixosConfigurations ? {},
   nixosImports ? [],
   nixosSpecialArgs ? (system: {}),
+  overlays ? [],
   packages ? (system: callPackage: {}),
   setHostName ? true,
   systems ? flake-utils.lib.defaultSystems,
@@ -19,7 +20,7 @@
   lib = nixpkgs.lib;
   genSystems = lib.attrsets.genAttrs systems;
 
-  pkgs = nixpkgs.legacyPackages;
+  pkgs = genSystems (system: import nixpkgs {inherit system overlays;});
   myPkgs = genSystems (system: packages system pkgs.${system}.callPackage);
 
   mySystems =
